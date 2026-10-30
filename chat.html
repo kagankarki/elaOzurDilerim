@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
-<title>Ela Bulut</title>
+<title>ElaGPT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet">
@@ -20,8 +20,41 @@
     --bot: #f5f2ed;
     --online: #9ccf9a;
     --angry: #e0857a;
+    --angry-line: #f3d4cf;
+    --angry-bg: #fdf6f5;
+    --surface: #ffffff;
+    --header-bg: rgba(255, 255, 255, .9);
+    --user-ink: #ffffff;
+    --placeholder: #b5afa6;
     --shadow: 0 10px 40px rgba(60, 50, 30, 0.08);
+    color-scheme: light;
   }
+  /* Koyu tema: sistem koyuysa otomatik, ya da düğmeyle seçilince */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131211; --bg-soft: #1b1a18; --ink: #f2efe9; --ink-soft: #9a948b; --line: #2d2b28;
+      --accent: #d6b77d; --accent-soft: #2a251d; --user: #f2efe9; --bot: #22201d;
+      --angry: #ec9488; --angry-line: #4a2c28; --angry-bg: #261a18;
+      --surface: #1b1a18; --header-bg: rgba(19, 18, 17, .88); --user-ink: #131211;
+      --placeholder: #6e6962; --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131211; --bg-soft: #1b1a18; --ink: #f2efe9; --ink-soft: #9a948b; --line: #2d2b28;
+    --accent: #d6b77d; --accent-soft: #2a251d; --user: #f2efe9; --bot: #22201d;
+    --angry: #ec9488; --angry-line: #4a2c28; --angry-bg: #261a18;
+    --surface: #1b1a18; --header-bg: rgba(19, 18, 17, .88); --user-ink: #131211;
+    --placeholder: #6e6962; --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+  body { transition: background .3s, color .3s; }
+  .theme {
+    width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
+    color: var(--ink); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: transform .3s, border-color .2s;
+  }
+  .theme:hover { border-color: var(--accent); transform: rotate(-20deg); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
@@ -34,7 +67,7 @@
   /* Üst bar */
   header {
     flex: none; display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.9);
+    padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--header-bg);
     backdrop-filter: blur(8px);
   }
   .back, .new {
@@ -45,7 +78,7 @@
   .who { display: flex; align-items: center; gap: 10px; margin-right: auto; }
   .avatar {
     width: 38px; height: 38px; border-radius: 50%; flex: none;
-    background: radial-gradient(circle at 35% 30%, #fff, var(--accent-soft));
+    background: radial-gradient(circle at 35% 30%, var(--surface), var(--accent-soft));
     border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 19px;
     transition: filter .4s;
   }
@@ -68,7 +101,7 @@
   .empty .warn { font-family: "Inter", sans-serif; font-style: normal; font-size: 13px; margin-top: 10px; color: var(--angry); }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 26px; }
   .chip {
-    background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px;
     font-family: inherit; font-size: 14px; color: var(--ink); cursor: pointer;
     transition: border-color .2s, transform .2s, box-shadow .2s;
   }
@@ -80,10 +113,10 @@
     max-width: 78%; padding: 8px 14px; border-radius: 18px; margin-top: 3px;
     white-space: pre-wrap; word-wrap: break-word; animation: fade .25s both;
   }
-  .b.me { align-self: flex-end; background: var(--user); color: #fff; border-bottom-right-radius: 6px; }
+  .b.me { align-self: flex-end; background: var(--user); color: var(--user-ink); border-bottom-right-radius: 6px; }
   .b.her { align-self: flex-start; background: var(--bot); border-bottom-left-radius: 6px; }
   .b.first { margin-top: 14px; }
-  .b.deleted { color: var(--ink-soft); font-style: italic; background: #fff; border: 1px dashed var(--line); }
+  .b.deleted { color: var(--ink-soft); font-style: italic; background: var(--surface); border: 1px dashed var(--line); }
   .b.deleted::before { content: "🚫 "; font-style: normal; }
   .b.erasing { animation: erase .35s forwards; }
   @keyframes erase { to { opacity: 0; transform: scale(.92); } }
@@ -100,13 +133,13 @@
     background: var(--bg-soft); border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px;
     animation: fade .4s both;
   }
-  .sys.angry { color: var(--angry); border-color: #f3d4cf; background: #fdf6f5; }
+  .sys.angry { color: var(--angry); border-color: var(--angry-line); background: var(--angry-bg); }
 
   /* Yazma alanı */
-  footer { flex: none; padding: 8px 16px 14px; background: linear-gradient(transparent, #fff 30%); }
+  footer { flex: none; padding: 8px 16px 14px; background: linear-gradient(transparent, var(--bg) 30%); }
   .composer {
     max-width: 720px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px;
-    background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 8px 8px 8px 18px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 8px 8px 8px 18px;
     box-shadow: var(--shadow); transition: border-color .2s, opacity .3s;
   }
   .composer:focus-within { border-color: var(--accent); }
@@ -116,10 +149,10 @@
     font-family: inherit; font-size: 16px; line-height: 1.5; color: var(--ink);
     max-height: 160px; padding: 6px 0;
   }
-  textarea::placeholder { color: #b5afa6; }
+  textarea::placeholder { color: var(--placeholder); }
   .send {
     width: 38px; height: 38px; flex: none; border-radius: 50%; border: none; cursor: pointer;
-    background: var(--ink); color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center;
+    background: var(--ink); color: var(--bg); font-size: 18px; display: flex; align-items: center; justify-content: center;
     transition: opacity .2s, transform .2s;
   }
   .send:hover:not(:disabled) { transform: scale(1.06); }
@@ -141,10 +174,11 @@
   <div class="who">
     <div class="avatar">☁️</div>
     <div>
-      <div class="name">Ela Bulut</div>
+      <div class="name">ElaGPT</div>
       <div class="status" id="status">çevrimiçi</div>
     </div>
   </div>
+  <button class="theme" id="themeBtn" title="Tema değiştir" aria-label="Tema değiştir">☾</button>
   <button class="new" id="newChat" title="Yeni sohbet">✎ <span>Yeni sohbet</span></button>
 </header>
 
@@ -152,7 +186,7 @@
   <div class="thread" id="thread">
     <div class="empty" id="empty">
       <div class="cloud">☁️</div>
-      <h1 class="script">Ela Bulut</h1>
+      <h1 class="script">ElaGPT</h1>
       <p>Ela'nın yapay zeka hâli. Birebir.</p>
       <p class="warn">Dikkat: ters bir şey dersen küsüp gidebilir 😤</p>
       <div class="chips">
@@ -175,13 +209,13 @@
 
 <script>
   // ============================================================
-  //  Ela Bulut sohbet arayüzü
+  //  ElaGPT sohbet arayüzü
   //  - Sohbet sadece bu sayfanın hafızasında durur, hiçbir yere kaydedilmez.
   //  - Cevaplar /api/chat (Vercel + Gemini) üzerinden gelir.
   //  - Cevaptaki her satır ayrı mesaj olarak gösterilir.
   //  - Özel işaretler:
   //      [SILINDI: metin]  -> mesaj gönderilir, sonra "bu mesaj silindi" olur
-  //      [KUS]             -> Ela Bulut küser, bir süre mesaj atılamaz
+  //      [KUS]             -> ElaGPT küser, bir süre mesaj atılamaz
   // ============================================================
   const API_URL = "/api/chat";
 
@@ -192,6 +226,24 @@
   const form = document.getElementById("composer");
   const statusEl = document.getElementById("status");
   const emptyHTML = document.getElementById("empty").outerHTML;
+
+  // ---- Koyu / açık tema (sadece tema tercihi hatırlanır, sohbet değil) ----
+  const themeBtn = document.getElementById("themeBtn");
+  const sysDark = window.matchMedia("(prefers-color-scheme: dark)");
+  function currentTheme() {
+    return document.documentElement.dataset.theme || (sysDark.matches ? "dark" : "light");
+  }
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    themeBtn.textContent = t === "dark" ? "☀" : "☾";
+  }
+  try { const saved = localStorage.getItem("elagpt-theme"); if (saved) applyTheme(saved); } catch (_) {}
+  themeBtn.textContent = currentTheme() === "dark" ? "☀" : "☾";
+  themeBtn.addEventListener("click", () => {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    applyTheme(next);
+    try { localStorage.setItem("elagpt-theme", next); } catch (_) {}
+  });
 
   let messages = [];     // sadece hafızada: { role: "user" | "model", text }
   let busy = false;
@@ -255,7 +307,7 @@
     return { steps, sulk };
   }
 
-  // Ela Bulut'un mesajlarını tek tek, yazıyormuş gibi gönder
+  // ElaGPT'nin mesajlarını tek tek, yazıyormuş gibi gönder
   async function play(raw, token) {
     const { steps, sulk } = parseReply(raw);
     for (let i = 0; i < steps.length; i++) {
@@ -288,7 +340,7 @@
     const secs = Math.round(rand(30, 60));
     sulkUntil = Date.now() + secs * 1000;
     document.body.classList.add("sulking");
-    sysNote("Ela Bulut küstü ve sohbetten çıktı 😤", true);
+    sysNote("ElaGPT küstü ve sohbetten çıktı 😤", true);
     input.disabled = true;
     tickSulk();
     sulkTimer = setInterval(tickSulk, 1000);
@@ -306,7 +358,7 @@
     input.disabled = false;
     input.placeholder = "Mesaj yaz…";
     setStatus("çevrimiçi");
-    if (announce) sysNote("Ela Bulut geri döndü 👀 ama hâlâ biraz triplidir");
+    if (announce) sysNote("ElaGPT geri döndü 👀 ama hâlâ biraz triplidir");
     autosize();
   }
 
