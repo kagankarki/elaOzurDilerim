@@ -89,17 +89,68 @@
   .letter .hi { font-size: 40px; margin-bottom: 14px; color: var(--accent); }
   .letter .sign { text-align: right; font-size: 36px; margin-top: 30px; color: var(--ink); }
 
-  /* 8 söz */
-  .promises { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
-  .promise {
-    display: flex; gap: 18px; align-items: flex-start;
-    background: #fff; border: 1px solid var(--line); border-radius: 4px;
-    padding: 22px 24px; box-shadow: 0 4px 18px rgba(60,50,30,0.04);
-    transition: transform .3s, box-shadow .3s;
+  /* 8 balon oyunu */
+  .counter { text-align: center; font-size: 22px; color: var(--accent); letter-spacing: 4px; margin-top: -30px; }
+  .note {
+    text-align: center; min-height: 64px; margin: 14px auto 0; max-width: 520px;
+    font-size: 22px; font-style: italic; color: var(--ink);
   }
-  .promise:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-  .promise .num { font-size: 34px; color: var(--accent); line-height: 1; min-width: 30px; font-weight: 300; }
-  .promise p { font-size: 19px; }
+  .note.pop-in { animation: noteIn .45s cubic-bezier(.2, 1.6, .4, 1); }
+  @keyframes noteIn { from { transform: scale(.6); opacity: 0; } }
+  .stage { position: relative; height: 440px; max-width: 760px; margin: 0 auto; }
+  .balloon {
+    position: absolute; width: 74px; height: 90px; padding: 0; border: none;
+    border-radius: 50% 50% 47% 47% / 56% 56% 44% 44%;
+    background: radial-gradient(circle at 32% 26%, #fff 0 16%, #f7f4ef 42%, #e6dfd3 100%);
+    box-shadow: inset -6px -10px 16px rgba(120, 100, 70, .08), 0 10px 24px rgba(60, 50, 30, .12);
+    font-family: "Great Vibes", cursive; font-size: 34px; color: var(--accent);
+    cursor: pointer; transform-origin: 50% 130%;
+    animation: bobB 3.2s ease-in-out infinite;
+  }
+  .balloon::before {
+    content: ""; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%);
+    border: 6px solid transparent; border-bottom: 8px solid #e6dfd3; border-top: 0;
+  }
+  .balloon::after {
+    content: ""; position: absolute; left: 50%; top: calc(100% + 1px); width: 1px; height: 48px;
+    background: linear-gradient(var(--accent), transparent);
+  }
+  .balloon:hover { filter: brightness(1.03); }
+  @keyframes bobB {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-16px) rotate(4deg); }
+  }
+  .balloon.pop { animation: popB .32s ease-out forwards; pointer-events: none; }
+  @keyframes popB { 40% { transform: scale(1.3); } 100% { transform: scale(1.7); opacity: 0; } }
+  .bit {
+    position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none;
+    animation: bitFly .7s ease-out forwards;
+  }
+  @keyframes bitFly { to { transform: translate(var(--dx), var(--dy)) scale(.3); opacity: 0; } }
+
+  .eight-final {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; opacity: 0; pointer-events: none;
+    transition: opacity .8s;
+  }
+  .stage.done .eight-final { opacity: 1; pointer-events: auto; }
+  .eight-final svg { width: 190px; height: 230px; overflow: visible; transition: transform 1.4s cubic-bezier(.6, 0, .2, 1); }
+  .eight-final path {
+    fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round;
+    stroke-dasharray: 1; stroke-dashoffset: 1;
+    filter: drop-shadow(0 6px 14px rgba(201, 169, 110, .35));
+  }
+  .stage.done .eight-final path { animation: draw8 2.2s ease-in-out .3s forwards; }
+  @keyframes draw8 { to { stroke-dashoffset: 0; } }
+  .eight-final.turn svg { transform: rotate(90deg) scale(1.1); }
+  .eight-final p { font-size: 26px; font-style: italic; margin-top: 4px; min-height: 40px; text-align: center; }
+  .eight-final .big { font-family: "Great Vibes", cursive; font-size: 42px; font-style: normal; }
+  .replay {
+    margin-top: 10px; background: none; border: none; color: var(--ink-soft);
+    font-size: 17px; padding: 6px 12px; text-decoration: underline; text-underline-offset: 4px;
+    opacity: 0; transition: opacity .8s;
+  }
+  .eight-final.turn .replay { opacity: 1; }
 
   /* Fotoğraflar */
   .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
@@ -198,7 +249,8 @@
   @media (max-width: 600px) {
     body { font-size: 18px; }
     section { padding: 70px 16px; }
-    .promises { grid-template-columns: 1fr; }
+    .stage { height: 420px; }
+    .balloon { width: 62px; height: 76px; font-size: 28px; }
     .gallery { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     button { padding: 12px 32px; font-size: 20px; }
   }
@@ -237,17 +289,18 @@
 <section style="background: var(--bg-soft);">
   <div class="wrap">
     <div class="divider reveal">✦</div>
-    <h2 class="script reveal">Uğurlu sayın kadar söz</h2>
-    <p class="sub reveal">Senin sayın 8. Ben de sana 8 söz veriyorum.</p>
-    <div class="promises">
-      <div class="promise reveal"><div class="num">1</div><p>Seni dinleyeceğim, sözünü kesmeden.</p></div>
-      <div class="promise reveal"><div class="num">2</div><p>Düşünmeden konuşmayacağım.</p></div>
-      <div class="promise reveal"><div class="num">3</div><p>Seni hiçbir zaman küçük düşürmeyeceğim.</p></div>
-      <div class="promise reveal"><div class="num">4</div><p>Hata yaptığımda bahane değil, özür bulacağım.</p></div>
-      <div class="promise reveal"><div class="num">5</div><p>Seni gülümsetmek için elimden geleni yapacağım.</p></div>
-      <div class="promise reveal"><div class="num">6</div><p>Sınırlarına her zaman saygı duyacağım.</p></div>
-      <div class="promise reveal"><div class="num">7</div><p>Sana karşı hep dürüst olacağım.</p></div>
-      <div class="promise reveal"><div class="num">8</div><p>Bu sefer doğru bir başlangıç yapacağım. Söz.</p></div>
+    <h2 class="script reveal">Uğurlu sayın 8</h2>
+    <p class="sub reveal">O yüzden sana 8 balon şişirdim. Hepsini patlat, bakalım ne çıkacak 🎈</p>
+    <div class="counter reveal"><span id="popCount">0</span> / 8</div>
+    <div class="note" id="note">&nbsp;</div>
+    <div class="stage" id="stage">
+      <div class="eight-final" id="eightFinal">
+        <svg viewBox="0 0 120 150" aria-hidden="true">
+          <path pathLength="1" d="M60,75 C100,45 104,6 60,6 C16,6 20,45 60,75 C100,105 104,144 60,144 C16,144 20,105 60,75 Z"/>
+        </svg>
+        <p id="eightText"></p>
+        <button class="replay" id="replay">bir daha patlat ↺</button>
+      </div>
     </div>
   </div>
 </section>
@@ -332,6 +385,82 @@
     gallery.appendChild(card);
   }
   document.getElementById("lightbox").addEventListener("click", e => e.currentTarget.classList.remove("open"));
+
+  // ---- 8 balon oyunu ----
+  const stage = document.getElementById("stage");
+  const note = document.getElementById("note");
+  const popCount = document.getElementById("popCount");
+  const eightFinal = document.getElementById("eightFinal");
+  const eightText = document.getElementById("eightText");
+  const spots = [[6, 6], [30, 26], [54, 4], [80, 22], [12, 52], [36, 60], [60, 46], [84, 58]];
+  const notes = [
+    "Gülüşün: 10/10 ✨",
+    "Asansör pozların ayrı bir sanat 📸",
+    "Bu balon sadece “özür dilerim” diyor 🥺",
+    "Beyaz sana gerçekten çok yakışıyor 🤍",
+    "Öpücük pozu: onaylandı 💋",
+    "Yarıdan fazlası gitti, devam!",
+    "Bir tane kaldı… heyecan yapma",
+    "Ve sonuncusu… bak ne oldu 👇"
+  ];
+  let popped = 0;
+
+  function burst(x, y) {
+    for (let i = 0; i < 12; i++) {
+      const b = document.createElement("span");
+      b.className = "bit";
+      const a = (Math.PI * 2 * i) / 12, d = 40 + Math.random() * 40;
+      b.style.left = x + "px"; b.style.top = y + "px";
+      b.style.background = i % 3 ? "#e6dfd3" : "var(--accent)";
+      b.style.setProperty("--dx", Math.cos(a) * d + "px");
+      b.style.setProperty("--dy", Math.sin(a) * d + "px");
+      stage.appendChild(b);
+      setTimeout(() => b.remove(), 800);
+    }
+  }
+
+  function buildBalloons() {
+    popped = 0; popCount.textContent = "0"; note.innerHTML = "&nbsp;";
+    stage.classList.remove("done"); eightFinal.classList.remove("turn"); eightText.textContent = "";
+    spots.forEach(([l, t], i) => {
+      const b = document.createElement("button");
+      b.className = "balloon";
+      b.textContent = i + 1;
+      b.setAttribute("aria-label", "Balon " + (i + 1));
+      b.style.left = `calc(${l}% - ${l * 0.6}px)`;
+      b.style.top = t + "%";
+      b.style.animationDelay = (-i * 0.4) + "s";
+      b.style.animationDuration = (2.8 + (i % 3) * 0.4) + "s";
+      b.addEventListener("click", () => {
+        const r = b.getBoundingClientRect(), s = stage.getBoundingClientRect();
+        burst(r.left - s.left + r.width / 2, r.top - s.top + r.height / 2);
+        b.classList.add("pop");
+        setTimeout(() => b.remove(), 350);
+        note.textContent = notes[popped];
+        note.classList.remove("pop-in"); void note.offsetWidth; note.classList.add("pop-in");
+        popped++;
+        popCount.textContent = popped;
+        if (popped === 8) finishEight();
+      });
+      stage.appendChild(b);
+    });
+  }
+
+  function finishEight() {
+    const path = eightFinal.querySelector("path");
+    path.style.animation = "none"; void path.offsetWidth; path.style.animation = "";
+    setTimeout(() => {
+      stage.classList.add("done");
+      eightText.textContent = "Senin sayın: 8";
+      if (!reduce) for (let i = 0; i < 24; i++) setTimeout(petal, i * 60);
+    }, 500);
+    setTimeout(() => {
+      eightFinal.classList.add("turn");
+      eightText.innerHTML = '8’i yan çevirince sonsuzluk olur<br><span class="big">sonsuz kere özür dilerim ♡</span>';
+    }, 3600);
+  }
+  document.getElementById("replay").addEventListener("click", buildBalloons);
+  buildBalloons();
 
   // ---- Kaydırınca beliren bölümler ----
   const io = new IntersectionObserver(entries => {
