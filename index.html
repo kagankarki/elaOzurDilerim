@@ -243,6 +243,35 @@
   .shield.on { display: flex; }
   @media print { body * { display: none !important; } }
 
+  /* Açılış seçim ekranı */
+  body.gated { overflow: hidden; }
+  .gate {
+    position: fixed; inset: 0; z-index: 90;
+    background: radial-gradient(ellipse at center, #ffffff 0%, var(--bg-soft) 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 24px 16px;
+    transition: opacity .8s, visibility .8s;
+  }
+  .gate.gone { opacity: 0; visibility: hidden; }
+  .gate .eight { font-size: 15px; letter-spacing: 8px; color: var(--accent); margin-bottom: 10px; }
+  .gate h1 { font-size: clamp(64px, 14vw, 110px); line-height: 1.05; }
+  .gate .q { color: var(--ink-soft); font-style: italic; font-size: 24px; margin: 8px 0 40px; }
+  .choices { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 640px; }
+  .choice {
+    flex: 1 1 240px; max-width: 300px;
+    background: #fff; border: 1px solid var(--line); border-radius: 18px;
+    padding: 30px 22px; cursor: pointer; text-decoration: none; color: var(--ink);
+    box-shadow: var(--shadow); font-family: inherit;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+    animation: rise .9s cubic-bezier(.2, .8, .2, 1) both;
+  }
+  .choice:nth-child(2) { animation-delay: .15s; }
+  .choice:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 16px 50px rgba(60, 50, 30, .12); }
+  .choice .ic { font-size: 40px; line-height: 1; display: block; margin-bottom: 12px; }
+  .choice .t { font-family: "Great Vibes", cursive; font-size: 40px; line-height: 1.2; display: block; }
+  .choice .d { color: var(--ink-soft); font-style: italic; font-size: 18px; display: block; margin-top: 6px; }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1s, transform 1s; }
   .reveal.in { opacity: 1; transform: none; }
 
@@ -263,6 +292,24 @@
 <body>
 
 <div id="petals"></div>
+
+<div class="gate" id="gate">
+  <div class="eight">✦ 8 ✦</div>
+  <h1 class="script">Ela,</h1>
+  <p class="q">ne yapmak istersin?</p>
+  <div class="choices">
+    <button class="choice" id="pickLetter">
+      <span class="ic">✉️</span>
+      <span class="t">Özür mektubu</span>
+      <span class="d">Sana yazdıklarımı oku</span>
+    </button>
+    <a class="choice" href="chat.html">
+      <span class="ic">☁️</span>
+      <span class="t">Ela Bulut</span>
+      <span class="d">Biraz sohbet edelim</span>
+    </a>
+  </div>
+</div>
 
 <section class="hero">
   <div class="eight">✦ 8 ✦</div>
@@ -385,6 +432,19 @@
     gallery.appendChild(card);
   }
   document.getElementById("lightbox").addEventListener("click", e => e.currentTarget.classList.remove("open"));
+
+  // ---- Açılış seçimi ----
+  const gate = document.getElementById("gate");
+  function openLetter() {
+    gate.classList.add("gone");
+    document.body.classList.remove("gated");
+  }
+  if (location.hash === "#mektup") openLetter();
+  else document.body.classList.add("gated");
+  document.getElementById("pickLetter").addEventListener("click", () => {
+    window.scrollTo(0, 0);
+    openLetter();
+  });
 
   // ---- 8 balon oyunu ----
   const stage = document.getElementById("stage");

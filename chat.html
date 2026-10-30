@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+<title>Ela Bulut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #fbfaf8;
+    --ink: #2b2a28;
+    --ink-soft: #8a857e;
+    --line: #ece8e2;
+    --accent: #c9a96e;
+    --accent-soft: #f5efe4;
+    --user: #2b2a28;
+    --bot: #f5f2ed;
+    --online: #9ccf9a;
+    --angry: #e0857a;
+    --shadow: 0 10px 40px rgba(60, 50, 30, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: "Inter", system-ui, sans-serif; font-size: 16px; line-height: 1.5;
+    display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
+  }
+  .script { font-family: "Great Vibes", cursive; font-weight: 400; }
+
+  /* Üst bar */
+  header {
+    flex: none; display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.9);
+    backdrop-filter: blur(8px);
+  }
+  .back, .new {
+    text-decoration: none; color: var(--ink-soft); font-size: 14px; background: none; border: 1px solid transparent;
+    padding: 6px 10px; border-radius: 10px; cursor: pointer; font-family: inherit; transition: background .2s, color .2s;
+  }
+  .back:hover, .new:hover { background: var(--bg-soft); color: var(--ink); }
+  .who { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 35% 30%, #fff, var(--accent-soft));
+    border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 19px;
+    transition: filter .4s;
+  }
+  body.sulking .who .avatar { filter: grayscale(1); }
+  .who .name { font-family: "Great Vibes", cursive; font-size: 28px; line-height: 1; }
+  .who .status { font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; min-height: 18px; }
+  .who .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--online); transition: background .3s; }
+  .who .status.typing { color: var(--accent); font-style: italic; }
+  body.sulking .who .status::before { background: var(--angry); }
+  body.sulking .who .status { color: var(--angry); }
+
+  /* Mesajlar */
+  main { flex: 1; overflow-y: auto; }
+  .thread { max-width: 720px; margin: 0 auto; padding: 20px 16px 12px; display: flex; flex-direction: column; }
+
+  .empty { text-align: center; padding: 7vh 0 24px; animation: fade .8s both; }
+  .empty .cloud { font-size: 54px; animation: float 4s ease-in-out infinite; display: inline-block; }
+  .empty h1 { font-size: clamp(48px, 10vw, 68px); line-height: 1.1; margin-top: 4px; }
+  .empty p { color: var(--ink-soft); font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 21px; }
+  .empty .warn { font-family: "Inter", sans-serif; font-style: normal; font-size: 13px; margin-top: 10px; color: var(--angry); }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 26px; }
+  .chip {
+    background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px;
+    font-family: inherit; font-size: 14px; color: var(--ink); cursor: pointer;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .chip:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(60,50,30,.07); }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+  @keyframes fade { from { opacity: 0; transform: translateY(8px); } }
+
+  .b {
+    max-width: 78%; padding: 8px 14px; border-radius: 18px; margin-top: 3px;
+    white-space: pre-wrap; word-wrap: break-word; animation: fade .25s both;
+  }
+  .b.me { align-self: flex-end; background: var(--user); color: #fff; border-bottom-right-radius: 6px; }
+  .b.her { align-self: flex-start; background: var(--bot); border-bottom-left-radius: 6px; }
+  .b.first { margin-top: 14px; }
+  .b.deleted { color: var(--ink-soft); font-style: italic; background: #fff; border: 1px dashed var(--line); }
+  .b.deleted::before { content: "🚫 "; font-style: normal; }
+  .b.erasing { animation: erase .35s forwards; }
+  @keyframes erase { to { opacity: 0; transform: scale(.92); } }
+
+  .dots { align-self: flex-start; background: var(--bot); border-radius: 18px; border-bottom-left-radius: 6px;
+          padding: 12px 14px; margin-top: 3px; display: inline-flex; gap: 4px; }
+  .dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-soft); opacity: .35; animation: dot 1.2s infinite; }
+  .dots span:nth-child(2) { animation-delay: .15s; }
+  .dots span:nth-child(3) { animation-delay: .3s; }
+  @keyframes dot { 30% { opacity: .9; transform: translateY(-3px); } }
+
+  .sys {
+    align-self: center; margin: 16px 0 4px; font-size: 13px; color: var(--ink-soft);
+    background: var(--bg-soft); border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px;
+    animation: fade .4s both;
+  }
+  .sys.angry { color: var(--angry); border-color: #f3d4cf; background: #fdf6f5; }
+
+  /* Yazma alanı */
+  footer { flex: none; padding: 8px 16px 14px; background: linear-gradient(transparent, #fff 30%); }
+  .composer {
+    max-width: 720px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px;
+    background: #fff; border: 1px solid var(--line); border-radius: 24px; padding: 8px 8px 8px 18px;
+    box-shadow: var(--shadow); transition: border-color .2s, opacity .3s;
+  }
+  .composer:focus-within { border-color: var(--accent); }
+  body.sulking .composer { opacity: .6; }
+  textarea {
+    flex: 1; border: none; outline: none; resize: none; background: none;
+    font-family: inherit; font-size: 16px; line-height: 1.5; color: var(--ink);
+    max-height: 160px; padding: 6px 0;
+  }
+  textarea::placeholder { color: #b5afa6; }
+  .send {
+    width: 38px; height: 38px; flex: none; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--ink); color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center;
+    transition: opacity .2s, transform .2s;
+  }
+  .send:hover:not(:disabled) { transform: scale(1.06); }
+  .send:disabled { opacity: .25; cursor: default; }
+  .send.stop { background: var(--accent); }
+  .fine { text-align: center; color: var(--ink-soft); font-size: 12px; margin-top: 8px; }
+
+  @media (max-width: 600px) {
+    .who .name { font-size: 24px; }
+    .back span, .new span { display: none; }
+    .b { max-width: 86%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back" href="index.html" title="Geri">← <span>Geri</span></a>
+  <div class="who">
+    <div class="avatar">☁️</div>
+    <div>
+      <div class="name">Ela Bulut</div>
+      <div class="status" id="status">çevrimiçi</div>
+    </div>
+  </div>
+  <button class="new" id="newChat" title="Yeni sohbet">✎ <span>Yeni sohbet</span></button>
+</header>
+
+<main id="scroller">
+  <div class="thread" id="thread">
+    <div class="empty" id="empty">
+      <div class="cloud">☁️</div>
+      <h1 class="script">Ela Bulut</h1>
+      <p>Ela'nın yapay zeka hâli. Birebir.</p>
+      <p class="warn">Dikkat: ters bir şey dersen küsüp gidebilir 😤</p>
+      <div class="chips">
+        <button class="chip">selam</button>
+        <button class="chip">kaç yaşındasın</button>
+        <button class="chip">kağanı affettin mi</button>
+        <button class="chip">sana bir şey söylicem</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <form class="composer" id="composer">
+    <textarea id="input" rows="1" placeholder="Mesaj yaz…" autocomplete="off"></textarea>
+    <button class="send" id="send" type="submit" disabled aria-label="Gönder">↑</button>
+  </form>
+  <div class="fine">Sohbetler kaydedilmez. Sayfayı kapatınca her şey silinir.</div>
+</footer>
+
+<script>
+  // ============================================================
+  //  Ela Bulut sohbet arayüzü
+  //  - Sohbet sadece bu sayfanın hafızasında durur, hiçbir yere kaydedilmez.
+  //  - Cevaplar /api/chat (Vercel + Gemini) üzerinden gelir.
+  //  - Cevaptaki her satır ayrı mesaj olarak gösterilir.
+  //  - Özel işaretler:
+  //      [SILINDI: metin]  -> mesaj gönderilir, sonra "bu mesaj silindi" olur
+  //      [KUS]             -> Ela Bulut küser, bir süre mesaj atılamaz
+  // ============================================================
+  const API_URL = "/api/chat";
+
+  const thread = document.getElementById("thread");
+  const scroller = document.getElementById("scroller");
+  const input = document.getElementById("input");
+  const send = document.getElementById("send");
+  const form = document.getElementById("composer");
+  const statusEl = document.getElementById("status");
+  const emptyHTML = document.getElementById("empty").outerHTML;
+
+  let messages = [];     // sadece hafızada: { role: "user" | "model", text }
+  let busy = false;
+  let run = null;        // o anki cevap akışı (durdurmak için)
+  let chatId = 0;
+  let sulkUntil = 0, sulkTimer = null;
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const rand = (a, b) => a + Math.random() * (b - a);
+  function toBottom() { scroller.scrollTop = scroller.scrollHeight; }
+
+  let lastSide = null;
+  function bubble(side, text, extra = "") {
+    const el = document.createElement("div");
+    el.className = `b ${side} ${extra}` + (lastSide !== side ? " first" : "");
+    el.textContent = text;
+    thread.appendChild(el);
+    lastSide = side;
+    toBottom();
+    return el;
+  }
+  function sysNote(text, angry) {
+    const el = document.createElement("div");
+    el.className = "sys" + (angry ? " angry" : "");
+    el.textContent = text;
+    thread.appendChild(el);
+    lastSide = null;
+    toBottom();
+  }
+  function showDots() {
+    const el = document.createElement("div");
+    el.className = "dots" + (lastSide !== "her" ? " first" : "");
+    el.innerHTML = "<span></span><span></span><span></span>";
+    if (lastSide !== "her") el.style.marginTop = "14px";
+    thread.appendChild(el);
+    toBottom();
+    return el;
+  }
+  function setStatus(text, typing) {
+    statusEl.textContent = text;
+    statusEl.classList.toggle("typing", !!typing);
+  }
+
+  // Modelin cevabını mesaj adımlarına çevir
+  function parseReply(raw) {
+    let sulk = false;
+    const steps = [];
+    raw.replace(/\r/g, "").split("\n").forEach(line => {
+      let l = line.trim();
+      if (/\[KUS\]/i.test(l)) { sulk = true; l = l.replace(/\[KUS\]/gi, "").trim(); }
+      if (!l) return;
+      const m = l.match(/^\[SIL[İI]ND[İI]\s*:\s*(.+?)\]\s*(.*)$/i);
+      if (m) {
+        steps.push({ type: "deleted", text: m[1].trim() });
+        if (m[2].trim()) steps.push({ type: "msg", text: m[2].trim() });
+        return;
+      }
+      l = l.replace(/\[[^\]]*\]/g, "").replace(/\*+/g, "").trim();
+      if (l) steps.push({ type: "msg", text: l });
+    });
+    return { steps, sulk };
+  }
+
+  // Ela Bulut'un mesajlarını tek tek, yazıyormuş gibi gönder
+  async function play(raw, token) {
+    const { steps, sulk } = parseReply(raw);
+    for (let i = 0; i < steps.length; i++) {
+      const s = steps[i];
+      if (token.stopped) return;
+      setStatus("yazıyor…", true);
+      const dots = showDots();
+      await sleep(Math.min(2200, 450 + s.text.length * rand(35, 60)) * (i === 0 ? 1 : rand(.6, 1)));
+      dots.remove();
+      if (token.stopped) break;
+      const el = bubble("her", s.text);
+      if (s.type === "deleted") {
+        await sleep(rand(1300, 2100));
+        el.classList.add("erasing");
+        await sleep(350);
+        el.classList.remove("erasing");
+        el.classList.add("deleted");
+        el.textContent = "bu mesaj silindi";
+        await sleep(rand(500, 900));
+      } else {
+        await sleep(rand(150, 500));
+      }
+    }
+    setStatus("çevrimiçi");
+    if (sulk && !token.stopped) startSulk();
+  }
+
+  // ---- Küsme ----
+  function startSulk() {
+    const secs = Math.round(rand(30, 60));
+    sulkUntil = Date.now() + secs * 1000;
+    document.body.classList.add("sulking");
+    sysNote("Ela Bulut küstü ve sohbetten çıktı 😤", true);
+    input.disabled = true;
+    tickSulk();
+    sulkTimer = setInterval(tickSulk, 1000);
+  }
+  function tickSulk() {
+    const left = Math.ceil((sulkUntil - Date.now()) / 1000);
+    if (left <= 0) return endSulk(true);
+    setStatus(`küstü · ${left} sn`);
+    input.placeholder = `küstü… ${left} sn sonra belki döner`;
+    send.disabled = true;
+  }
+  function endSulk(announce) {
+    clearInterval(sulkTimer); sulkTimer = null; sulkUntil = 0;
+    document.body.classList.remove("sulking");
+    input.disabled = false;
+    input.placeholder = "Mesaj yaz…";
+    setStatus("çevrimiçi");
+    if (announce) sysNote("Ela Bulut geri döndü 👀 ama hâlâ biraz triplidir");
+    autosize();
+  }
+
+  // ---- API ----
+  // Yapay zeka bağlı değilken (yerel önizleme) gösterilecek cevaplar
+  const demoReplies = [
+    "ay\nne diyon sen\nahahhahahahahhahaha",
+    "[SILINDI: kağan lütfen yapar mısın]\nçok tatlısın ya",
+    "tok değilim\nsinirliyim\n[KUS]",
+    "?\nanlatır mısın"
+  ];
+  let demoIndex = 0;
+
+  async function getReply(signal) {
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages }),
+        signal
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && typeof data.reply === "string" && data.reply.trim()) return data.reply;
+      }
+      if (![404, 405, 501].includes(res.status)) throw new Error("server");
+    } catch (e) {
+      if (e.name === "AbortError" || e.message === "server") throw e;
+    }
+    await sleep(rand(500, 1000));
+    return demoReplies[demoIndex++ % demoReplies.length];
+  }
+
+  function setBusy(on) {
+    busy = on;
+    send.classList.toggle("stop", on);
+    send.textContent = on ? "■" : "↑";
+    send.setAttribute("aria-label", on ? "Durdur" : "Gönder");
+    send.disabled = on ? false : (!input.value.trim() || !!sulkUntil);
+  }
+
+  async function submit(text) {
+    text = text.trim();
+    if (!text || busy || sulkUntil) return;
+    const empty = document.getElementById("empty");
+    if (empty) empty.remove();
+
+    messages.push({ role: "user", text });
+    bubble("me", text);
+    input.value = ""; autosize();
+    setBusy(true);
+
+    const myChat = chatId;
+    const token = run = { stopped: false, ctrl: new AbortController() };
+    try {
+      // gerçek biri gibi okuyup biraz düşünsün
+      await sleep(rand(400, 900));
+      const reply = await getReply(token.ctrl.signal);
+      if (token.stopped) throw new DOMException("durduruldu", "AbortError");
+      messages.push({ role: "model", text: reply });
+      await play(reply, token);
+    } catch (e) {
+      if (myChat !== chatId) return;
+      setStatus("çevrimiçi");
+      if (e.name !== "AbortError") {
+        messages.pop();
+        sysNote("bağlantı koptu, bir daha dener misin ☁️", true);
+      }
+    } finally {
+      if (myChat === chatId) {
+        run = null;
+        setBusy(false);
+        if (!sulkUntil) input.focus();
+      }
+    }
+  }
+
+  function stop() {
+    if (!run) return;
+    run.stopped = true;
+    run.ctrl.abort();
+    thread.querySelectorAll(".dots").forEach(d => d.remove());
+    setStatus("çevrimiçi");
+  }
+
+  function autosize() {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 160) + "px";
+    if (!busy) send.disabled = !input.value.trim() || !!sulkUntil;
+  }
+
+  input.addEventListener("input", autosize);
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+      e.preventDefault();
+      submit(input.value);
+    }
+  });
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    busy ? stop() : submit(input.value);
+  });
+  thread.addEventListener("click", e => {
+    const chip = e.target.closest(".chip");
+    if (chip) submit(chip.textContent);
+  });
+  document.getElementById("newChat").addEventListener("click", () => {
+    stop();
+    chatId++;
+    run = null;
+    setBusy(false);   // küsmüşse yeni sohbet de küsmeyi bitirmez
+    messages = [];
+    lastSide = null;
+    thread.innerHTML = emptyHTML;
+    input.value = ""; autosize();
+    input.focus();
+  });
+
+  if (window.matchMedia("(pointer: fine)").matches) input.focus();
+</script>
+</body>
+</html>
