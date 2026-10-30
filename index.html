@@ -176,6 +176,22 @@
 
   footer { text-align: center; padding: 40px 20px; color: var(--ink-soft); font-size: 16px; position: relative; z-index: 1; }
 
+  /* Fotoğraf ve videoyu kaydetmeyi zorlaştır */
+  img, video {
+    -webkit-user-select: none; user-select: none;
+    -webkit-touch-callout: none; -webkit-user-drag: none;
+  }
+  .photo, .lightbox, .surprise video { -webkit-touch-callout: none; }
+
+  /* Sayfa odağı kaybedince (ekran görüntüsü aracı vb.) içerik gizlenir */
+  .shield {
+    position: fixed; inset: 0; z-index: 999; background: #fff;
+    display: none; align-items: center; justify-content: center;
+    font-family: "Great Vibes", cursive; font-size: 48px; color: var(--accent);
+  }
+  .shield.on { display: flex; }
+  @media print { body * { display: none !important; } }
+
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1s, transform 1s; }
   .reveal.in { opacity: 1; transform: none; }
 
@@ -259,6 +275,8 @@
 
 <footer>Ela için, 8 kere özür dilerim ♡</footer>
 
+<div class="shield" id="shield">♡</div>
+
 <div class="lightbox" id="lightbox"><img id="lbImg" alt=""></div>
 
 <div class="final" id="final">
@@ -271,7 +289,9 @@
 <div class="surprise" id="surprise">
   <div class="eight">✦ sana özel ✦</div>
   <h3 class="script">Küçük bir sürpriz</h3>
-  <video id="surpriseVideo" src="surpriz.mp4" controls playsinline preload="metadata"></video>
+  <video id="surpriseVideo" src="surpriz.mp4" controls playsinline preload="metadata"
+         controlsList="nodownload noplaybackrate noremoteplayback"
+         disablePictureInPicture disableRemotePlayback></video>
 </div>
 
 <script>
@@ -406,6 +426,41 @@
     document.getElementById("final").classList.add("show");
     if (!reduce) for (let i = 0; i < 88; i++) setTimeout(petal, i * 40);
     setTimeout(() => document.getElementById("noteBtn").classList.add("show"), 2500);
+  });
+
+  // ---- Kaydetme / ekran görüntüsü caydırıcıları ----
+  // Not: Tarayıcıda SS ve ekran kaydını %100 engellemek mümkün değil; bunlar zorlaştırır.
+  const shield = document.getElementById("shield");
+  const vid = document.getElementById("surpriseVideo");
+  function hide() { shield.classList.add("on"); vid.pause(); }
+  function show() { shield.classList.remove("on"); }
+
+  // Sağ tık, uzun basma menüsü ve sürükleyip bırakma kapalı
+  document.addEventListener("contextmenu", e => e.preventDefault());
+  document.addEventListener("dragstart", e => { if (e.target.closest("img, video")) e.preventDefault(); });
+
+  // Sekme / pencere odağını kaybedince içerik beyaza döner, video durur
+  document.addEventListener("visibilitychange", () => document.hidden ? hide() : show());
+  window.addEventListener("blur", hide);
+  window.addEventListener("focus", show);
+  shield.addEventListener("click", show);
+
+  // Kaydet, yazdır, kaynak kodu ve geliştirici araçları kısayolları kapalı
+  document.addEventListener("keydown", e => {
+    const k = e.key.toLowerCase();
+    const mod = e.ctrlKey || e.metaKey;
+    if ((mod && ["s", "p", "u"].includes(k)) || k === "f12" ||
+        (mod && e.shiftKey && ["i", "j", "c", "s"].includes(k))) {
+      e.preventDefault();
+    }
+    if (k === "printscreen") hide();
+  });
+  document.addEventListener("keyup", e => {
+    if (e.key === "PrintScreen") {
+      hide();
+      try { navigator.clipboard.writeText("♡").catch(() => {}); } catch (_) {}
+      setTimeout(show, 1500);
+    }
   });
 
   // ---- Sana özel not: sürpriz video ----
