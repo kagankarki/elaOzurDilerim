@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+<!-- Leaflet Harita Aracı (Ücretsiz & Açık Kaynak) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --bg: #ffffff;
@@ -159,28 +162,81 @@
   #no.run { position: fixed; z-index: 40; transition: left .18s ease-out, top .18s ease-out; }
   .hint { color: var(--ink-soft); font-style: italic; min-height: 32px; margin-top: 10px; font-size: 18px; }
 
+  /* Final / Date Planı Ekranı */
   .final {
     position: fixed; inset: 0; z-index: 90; background: var(--bg);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    text-align: center; padding: 50px 16px 80px; overflow-y: auto;
     opacity: 0; pointer-events: none; transition: opacity 1s, background .4s;
   }
   .final.show { opacity: 1; pointer-events: auto; }
-  .final h3 { font-size: clamp(52px, 11vw, 96px); line-height: 1.1; color: var(--ink); }
-  .final p { color: var(--ink-soft); font-style: italic; font-size: 24px; margin-top: 16px; max-width: 540px; }
-  .final .big-hearts { font-size: 28px; letter-spacing: 10px; color: var(--accent); margin-top: 36px; }
-  #noteBtn {
-    margin-top: 40px; background: var(--card-bg); color: var(--accent);
-    border: 1px solid var(--accent); box-shadow: var(--shadow);
-    opacity: 0; transform: translateY(10px); pointer-events: none;
-    transition: opacity 1s, transform 1s, background .2s;
+  .final h3 { font-size: clamp(48px, 9vw, 84px); line-height: 1.1; color: var(--ink); }
+  .final .desc { color: var(--ink-soft); font-style: italic; font-size: 22px; margin-top: 10px; max-width: 580px; }
+
+  /* Date Plan Form Kartı */
+  .plan-card {
+    max-width: 620px; width: 100%; margin: 30px auto 0;
+    background: var(--card-bg); border: 1px solid var(--line);
+    border-radius: 20px; padding: clamp(24px, 5vw, 36px); box-shadow: var(--shadow);
+    text-align: left; transition: background .4s, border-color .4s;
   }
-  #noteBtn.show { opacity: 1; transform: none; pointer-events: auto; animation: glow 2.4s ease-in-out infinite; }
-  #noteBtn:hover { background: var(--accent-soft); }
-  @keyframes glow { 50% { box-shadow: 0 0 0 8px rgba(45, 106, 79, 0.2), var(--shadow); } }
+  .plan-card-title {
+    font-size: 24px; font-weight: 600; color: var(--accent);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+  }
+  .plan-card-sub { font-size: 16px; color: var(--ink-soft); margin-bottom: 24px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block; font-size: 14px; font-weight: 600; color: var(--ink);
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;
+  }
+  .form-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .form-row .form-group { flex: 1; min-width: 180px; }
+  .form-control {
+    width: 100%; padding: 13px 16px; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--bg-soft); color: var(--ink); font-family: inherit; font-size: 17px;
+    outline: none; transition: border-color .2s, box-shadow .2s, background .3s;
+  }
+  .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.15); }
+  
+  /* Harita Alanı */
+  #map {
+    height: 240px; width: 100%; border-radius: 12px;
+    border: 1px solid var(--line); margin-top: 10px; z-index: 1;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .map-hint { font-size: 13px; color: var(--ink-soft); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+
+  .btn-submit {
+    width: 100%; padding: 16px 24px; margin-top: 10px;
+    background: var(--accent); color: #fff; border: none; border-radius: 40px;
+    font-family: inherit; font-size: 20px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(45, 106, 79, 0.25);
+    transition: transform .2s, background .2s, box-shadow .2s;
+  }
+  .btn-submit:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-2px); }
+  .btn-submit:disabled { opacity: .6; cursor: wait; }
+
+  /* Kaydedildi Ticket Kartı */
+  .ticket {
+    background: var(--bg-soft); border: 2px dashed var(--accent); border-radius: 14px;
+    padding: 22px; margin-top: 24px; display: none; text-align: left;
+  }
+  .ticket.active { display: block; animation: rise .6s ease both; }
+  .ticket-title { font-size: 20px; font-weight: 600; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .ticket-item { display: flex; align-items: center; gap: 10px; font-size: 17px; margin-bottom: 8px; color: var(--ink); }
+  .ticket-item strong { color: var(--accent); }
+
+  #noteBtn {
+    margin-top: 34px; background: var(--card-bg); color: var(--accent);
+    border: 1px solid var(--accent); box-shadow: var(--shadow);
+    padding: 14px 36px; border-radius: 40px; font-size: 20px;
+    cursor: pointer; transition: transform .2s, background .2s;
+  }
+  #noteBtn:hover { background: var(--accent-soft); transform: scale(1.04); }
 
   .surprise {
-    position: fixed; inset: 0; z-index: 95; background: var(--bg);
+    position: fixed; inset: 0; z-index: 98; background: var(--bg);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; padding: 24px 16px; overflow-y: auto;
     opacity: 0; pointer-events: none; transition: opacity 1s, background .4s;
@@ -249,6 +305,7 @@
     section { padding: 70px 16px; }
     .gallery { grid-template-columns: 1fr; max-width: 290px; margin: 0 auto; gap: 20px; }
     button { padding: 12px 32px; font-size: 20px; }
+    .form-row { flex-direction: column; gap: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     .petal, .scroll-hint { animation: none; display: none; }
@@ -335,12 +392,52 @@
 
 <div class="lightbox" id="lightbox"><img id="lbImg" alt=""></div>
 
-<!-- Kabul Edince Açılan Ekran -->
+<!-- Kabul Edince Açılan Ekran: Firebase & Harita Planlama -->
 <div class="final" id="final">
   <h3 class="script">O Zaman Anlaştık! 💚</h3>
-  <p>Bu harika bir haber. Şimdiden çok heyecanlandım, harika bir akşam olacak söz veriyorum!</p>
-  <div class="big-hearts">💚 🥂 💚 ✨ 💚</div>
-  <button id="noteBtn">Sana özel notu gör 💚</button>
+  <p class="desc">Şimdi planı yapma sırası sende. Günü, saati ve buluşmak istediğin mekanı seç:</p>
+  
+  <div class="plan-card">
+    <div class="plan-card-title">📅 Date Planımız</div>
+    <p class="plan-card-sub">Seçtiğin detaylar doğrudan Firebase'e kaydedilecek.</p>
+    
+    <form id="planForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="planDate">Gün / Tarih</label>
+          <input type="date" id="planDate" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="planTime">Saat</label>
+          <input type="time" id="planTime" class="form-control" value="19:30" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="planPlace">Mekan / Buluşma Yeri</label>
+        <input type="text" id="planPlace" class="form-control" placeholder="Haritadan seç veya buraya yaz (örn: Bebek Kahvesi, Moda...)" required />
+        <div id="map"></div>
+        <div class="map-hint">📍 Haritaya tıklayarak veya pini sürükleyerek mekanı belirleyebilirsin.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="planNote">Kağan'a Notun (Opsiyonel)</label>
+        <input type="text" id="planNote" class="form-control" placeholder="Örn: Tatlılar senden ama kahveler benden ☕" />
+      </div>
+
+      <button type="submit" id="savePlanBtn" class="btn-submit">Planı Kaydet & Kağan'a İlet 💚</button>
+    </form>
+
+    <div class="ticket" id="planTicket">
+      <div class="ticket-title">🥂 Buluşma Kartımız Hazır!</div>
+      <div class="ticket-item"><strong>📅 Gün:</strong> <span id="tDate">-</span></div>
+      <div class="ticket-item"><strong>⏰ Saat:</strong> <span id="tTime">-</span></div>
+      <div class="ticket-item"><strong>📍 Yer:</strong> <span id="tPlace">-</span></div>
+      <div class="ticket-item" id="tNoteRow" style="display:none;"><strong>💬 Notun:</strong> <span id="tNote">-</span></div>
+    </div>
+  </div>
+
+  <button id="noteBtn">Sana özel sürprizi gör 💚</button>
 </div>
 
 <!-- Sürpriz Video Ekranı -->
@@ -352,8 +449,151 @@
          disablePictureInPicture disableRemotePlayback></video>
 </div>
 
-<script>
-  // ---- Tema Ayarları ve Açılış Seçimi ----
+<!-- Firebase & Uygulama Scripti -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // Kullanıcının sağladığı Firebase yapılandırması
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYQJ3zW6JeuOXk0SFGFs7GynbeS5p-pcg",
+    authDomain: "kjojjh-604b1.firebaseapp.com",
+    projectId: "kjojjh-604b1",
+    storageBucket: "kjojjh-604b1.firebasestorage.app",
+    messagingSenderId: "636810235731",
+    appId: "1:636810235731:web:d423cee7c478a910db1ba6",
+    measurementId: "G-X0H7819GSL"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ---- Harita Kurulumu (Leaflet + OpenStreetMap - Ücretsiz) ----
+  let map, marker;
+  let currentLat = 41.0425, currentLng = 29.0075; // İstanbul Boğazı varsayılan
+
+  function initMap() {
+    if (map) return;
+    map = L.map('map').setView([currentLat, currentLng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const greenPin = L.divIcon({
+      className: 'custom-pin',
+      html: `<div style="background:#2d6a4f;color:#fff;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(45,106,79,0.4);border:2px solid #fff;"><span style="transform:rotate(45deg);font-size:15px;">💚</span></div>`,
+      iconSize: [34, 34],
+      iconAnchor: [17, 34]
+    });
+
+    marker = L.marker([currentLat, currentLng], { icon: greenPin, draggable: true }).addTo(map);
+
+    async function updateLocationName(lat, lng) {
+      currentLat = lat;
+      currentLng = lng;
+      const placeEl = document.getElementById("planPlace");
+      placeEl.placeholder = "Konum alınıyor…";
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+        if (res.ok) {
+          const d = await res.json();
+          const placeName = d.address.cafe || d.address.restaurant || d.address.amenity || d.address.road || d.address.suburb || d.display_name.split(",")[0];
+          const dist = d.address.city_district || d.address.town || d.address.city || "";
+          placeEl.value = (placeName ? placeName : "") + (dist ? `, ${dist}` : "");
+        }
+      } catch (_) {
+        placeEl.value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      }
+    }
+
+    map.on('click', (e) => {
+      marker.setLatLng(e.latlng);
+      updateLocationName(e.latlng.lat, e.latlng.lng);
+    });
+
+    marker.on('dragend', () => {
+      const pos = marker.getLatLng();
+      updateLocationName(pos.lat, pos.lng);
+    });
+  }
+
+  // Min tarih bugün olsun
+  const planDate = document.getElementById("planDate");
+  const today = new Date().toISOString().split("T")[0];
+  planDate.min = today;
+  planDate.value = today;
+
+  // Önceki kayıtlı plan varsa Firebase'den yükle
+  async function loadExistingPlan() {
+    try {
+      const q = query(collection(db, "Cemre"), orderBy("olusturulma", "desc"), limit(1));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const d = snap.docs[0].data();
+        showTicket(d.gun, d.saat, d.yer, d.not);
+        if (d.gun) planDate.value = d.gun;
+        if (d.saat) document.getElementById("planTime").value = d.saat;
+        if (d.yer) document.getElementById("planPlace").value = d.yer;
+        if (d.lat && d.lng && marker && map) {
+          marker.setLatLng([d.lat, d.lng]);
+          map.setView([d.lat, d.lng], 14);
+        }
+      }
+    } catch (err) {
+      console.log("Plan getirme hatası:", err);
+    }
+  }
+
+  function showTicket(gun, saat, yer, not) {
+    const t = document.getElementById("planTicket");
+    document.getElementById("tDate").textContent = gun || "-";
+    document.getElementById("tTime").textContent = saat || "-";
+    document.getElementById("tPlace").textContent = yer || "-";
+    if (not) {
+      document.getElementById("tNote").textContent = not;
+      document.getElementById("tNoteRow").style.display = "flex";
+    }
+    t.classList.add("active");
+  }
+
+  // Planı Kaydet Butonu
+  const form = document.getElementById("planForm");
+  const saveBtn = document.getElementById("savePlanBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const gun = planDate.value;
+    const saat = document.getElementById("planTime").value;
+    const yer = document.getElementById("planPlace").value.trim();
+    const not = document.getElementById("planNote").value.trim();
+
+    if (!gun || !saat || !yer) return;
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Kaydediliyor… 💚";
+
+    try {
+      await addDoc(collection(db, "Cemre"), {
+        gun,
+        saat,
+        yer,
+        lat: currentLat,
+        lng: currentLng,
+        not: not || "",
+        olusturulma: serverTimestamp()
+      });
+
+      saveBtn.textContent = "Plan Başarıyla Kaydedildi! 🎉";
+      showTicket(gun, saat, yer, not);
+    } catch (error) {
+      console.error("Firebase kayıt hatası:", error);
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Hata oluştu, tekrar dene ↺";
+    }
+  });
+
+  // ---- Açılış ve Tema ----
   const gate = document.getElementById("gate");
   const themeToggle = document.getElementById("themeToggle");
 
@@ -378,6 +618,21 @@
     applyTheme(cur);
   });
 
+  // ---- Evet Butonu: Final Ekranı ve Harita Hazırlığı ----
+  const yes = document.getElementById("yes");
+  const finalEl = document.getElementById("final");
+
+  yes.addEventListener("click", () => {
+    finalEl.classList.add("show");
+    initMap();
+    setTimeout(() => {
+      if (map) map.invalidateSize();
+      loadExistingPlan();
+    }, 400);
+  });
+</script>
+
+<script>
   // ---- Fotoğraflar: "fotolar" klasöründeki 3 fotoğraf ----
   const PHOTO_COUNT = 3;
   const captions = ["o bakış", "gülümsemen", "gün ışığı"];
@@ -441,7 +696,7 @@
 
   // ---- Date Teklifi: Evet / Hayır (Kaçan Buton) ----
   const no = document.getElementById("no");
-  const yes = document.getElementById("yes");
+  const yesBtn = document.getElementById("yes");
   const hint = document.getElementById("hint");
   const lines = [
     "Emin misin? 🥺",
@@ -463,7 +718,7 @@
       no.classList.add("run");
     }
     const bw = no.offsetWidth, bh = no.offsetHeight, pad = 16;
-    const yr = yes.getBoundingClientRect();
+    const yr = yesBtn.getBoundingClientRect();
     let x, y, ok = false;
     for (let k = 0; k < 40 && !ok; k++) {
       x = pad + Math.random() * (window.innerWidth - bw - pad * 2);
@@ -476,7 +731,7 @@
     no.style.top = y + "px";
     hint.textContent = lines[tries % lines.length];
     tries++;
-    yes.style.transform = `scale(${Math.min(1 + tries * 0.08, 1.6)})`;
+    yesBtn.style.transform = `scale(${Math.min(1 + tries * 0.08, 1.6)})`;
   }
   function tooClose(cx, cy) {
     const r = no.getBoundingClientRect();
@@ -501,12 +756,6 @@
   new IntersectionObserver(([en]) => {
     if (!en.isIntersecting) { no.classList.remove("run"); no.style.left = no.style.top = ""; }
   }, { threshold: 0.3 }).observe(document.querySelector(".ask"));
-
-  yes.addEventListener("click", () => {
-    document.getElementById("final").classList.add("show");
-    if (!reduce) for (let i = 0; i < 88; i++) setTimeout(petal, i * 40);
-    setTimeout(() => document.getElementById("noteBtn").classList.add("show"), 2200);
-  });
 
   // ---- Ekran Görüntüsü Caydırıcıları ----
   const shield = document.getElementById("shield");
