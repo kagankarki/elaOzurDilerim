@@ -437,8 +437,6 @@
       <div class="ticket-item" id="tNoteRow" style="display:none;"><strong>💬 Notun:</strong> <span id="tNote">-</span></div>
     </div>
   </div>
-
-  <button id="noteBtn">Sana özel sürprizi gör 💚</button>
 </div>
 
 <!-- Sürpriz Video Ekranı -->
@@ -789,10 +787,13 @@
   });
 
   // ---- Sana özel not: sürpriz video ----
-  document.getElementById("noteBtn").addEventListener("click", () => {
-    document.getElementById("surprise").classList.add("show");
-    vid.play().catch(() => {});
-  });
+  const noteBtn = document.getElementById("noteBtn");
+  if (noteBtn) {
+    noteBtn.addEventListener("click", () => {
+      document.getElementById("surprise").classList.add("show");
+      vid.play().catch(() => {});
+    });
+  }
 </script>
 </body>
 </html>
