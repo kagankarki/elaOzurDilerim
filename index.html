@@ -3,20 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ela, Özür Dilerim</title>
+<title>Cemre, Özür Dilerim</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #ffffff;
-    --bg-soft: #fbfaf8;
-    --ink: #2b2a28;
-    --ink-soft: #7a7670;
-    --line: #ece8e2;
-    --accent: #c9a96e;
-    --accent-soft: #f3ece0;
-    --shadow: 0 10px 40px rgba(60, 50, 30, 0.08);
+    --bg-soft: #f2f7f4;
+    --ink: #1a2920;
+    --ink-soft: #526b5b;
+    --line: #d8e5dc;
+    --accent: #2d6a4f;
+    --accent-light: #52b788;
+    --accent-soft: #e8f5ed;
+    --shadow: 0 10px 40px rgba(30, 60, 42, 0.08);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -29,14 +30,14 @@
     overflow-x: hidden;
   }
 
-  /* Yağan beyaz yapraklar */
+  /* Yağan yeşil yapraklar */
   #petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
   .petal {
     position: absolute; top: -40px;
     width: 14px; height: 14px;
-    background: radial-gradient(circle at 30% 30%, #fff, #f1ede6);
+    background: radial-gradient(circle at 30% 30%, #95d5b2, #52b788);
     border-radius: 80% 0 80% 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 4px rgba(45, 106, 79, 0.15);
     animation: fall linear forwards;
   }
   @keyframes fall {
@@ -47,16 +48,18 @@
   .wrap { max-width: 760px; margin: 0 auto; }
   .script { font-family: "Great Vibes", cursive; font-weight: 400; }
 
+  /* Rozet / Üst Başlık */
+  .badge {
+    font-size: 15px; letter-spacing: 8px; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 18px;
+  }
+
   /* Giriş */
   .hero {
     min-height: 100vh;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center;
     background: radial-gradient(ellipse at center, #ffffff 0%, var(--bg-soft) 100%);
-  }
-  .hero .eight {
-    font-size: 15px; letter-spacing: 8px; color: var(--accent);
-    text-transform: uppercase; margin-bottom: 18px;
   }
   .hero h1 { font-size: clamp(64px, 14vw, 130px); line-height: 1.05; color: var(--ink); }
   .hero p { font-size: clamp(20px, 3.5vw, 26px); color: var(--ink-soft); font-style: italic; margin-top: 18px; max-width: 520px; }
@@ -89,86 +92,24 @@
   .letter .hi { font-size: 40px; margin-bottom: 14px; color: var(--accent); }
   .letter .sign { text-align: right; font-size: 36px; margin-top: 30px; color: var(--ink); }
 
-  /* 8 balon oyunu */
-  .counter { text-align: center; font-size: 22px; color: var(--accent); letter-spacing: 4px; margin-top: -30px; }
-  .note {
-    text-align: center; min-height: 64px; margin: 14px auto 0; max-width: 520px;
-    font-size: 22px; font-style: italic; color: var(--ink);
-  }
-  .note.pop-in { animation: noteIn .45s cubic-bezier(.2, 1.6, .4, 1); }
-  @keyframes noteIn { from { transform: scale(.6); opacity: 0; } }
-  .stage { position: relative; height: 440px; max-width: 760px; margin: 0 auto; }
-  .balloon {
-    position: absolute; width: 74px; height: 90px; padding: 0; border: none;
-    border-radius: 50% 50% 47% 47% / 56% 56% 44% 44%;
-    background: radial-gradient(circle at 32% 26%, #fff 0 16%, #f7f4ef 42%, #e6dfd3 100%);
-    box-shadow: inset -6px -10px 16px rgba(120, 100, 70, .08), 0 10px 24px rgba(60, 50, 30, .12);
-    font-family: "Great Vibes", cursive; font-size: 34px; color: var(--accent);
-    cursor: pointer; transform-origin: 50% 130%;
-    animation: bobB 3.2s ease-in-out infinite;
-  }
-  .balloon::before {
-    content: ""; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%);
-    border: 6px solid transparent; border-bottom: 8px solid #e6dfd3; border-top: 0;
-  }
-  .balloon::after {
-    content: ""; position: absolute; left: 50%; top: calc(100% + 1px); width: 1px; height: 48px;
-    background: linear-gradient(var(--accent), transparent);
-  }
-  .balloon:hover { filter: brightness(1.03); }
-  @keyframes bobB {
-    0%, 100% { transform: translateY(0) rotate(-4deg); }
-    50% { transform: translateY(-16px) rotate(4deg); }
-  }
-  .balloon.pop { animation: popB .32s ease-out forwards; pointer-events: none; }
-  @keyframes popB { 40% { transform: scale(1.3); } 100% { transform: scale(1.7); opacity: 0; } }
-  .bit {
-    position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none;
-    animation: bitFly .7s ease-out forwards;
-  }
-  @keyframes bitFly { to { transform: translate(var(--dx), var(--dy)) scale(.3); opacity: 0; } }
-
-  .eight-final {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; opacity: 0; pointer-events: none;
-    transition: opacity .8s;
-  }
-  .stage.done .eight-final { opacity: 1; pointer-events: auto; }
-  .eight-final svg { width: 190px; height: 230px; overflow: visible; transition: transform 1.4s cubic-bezier(.6, 0, .2, 1); }
-  .eight-final path {
-    fill: none; stroke: var(--accent); stroke-width: 7; stroke-linecap: round;
-    stroke-dasharray: 1; stroke-dashoffset: 1;
-    filter: drop-shadow(0 6px 14px rgba(201, 169, 110, .35));
-  }
-  .stage.done .eight-final path { animation: draw8 2.2s ease-in-out .3s forwards; }
-  @keyframes draw8 { to { stroke-dashoffset: 0; } }
-  .eight-final.turn svg { transform: rotate(90deg) scale(1.1); }
-  .eight-final p { font-size: 26px; font-style: italic; margin-top: 4px; min-height: 40px; text-align: center; }
-  .eight-final .big { font-family: "Great Vibes", cursive; font-size: 42px; font-style: normal; }
-  .replay {
-    margin-top: 10px; background: none; border: none; color: var(--ink-soft);
-    font-size: 17px; padding: 6px 12px; text-decoration: underline; text-underline-offset: 4px;
-    opacity: 0; transition: opacity .8s;
-  }
-  .eight-final.turn .replay { opacity: 1; }
-
   /* Fotoğraflar */
-  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; justify-content: center; }
   .photo {
-    aspect-ratio: 3 / 4; background: var(--bg-soft); border: 1px solid var(--line);
-    padding: 10px 10px 36px; box-shadow: 0 6px 22px rgba(60,50,30,0.07);
-    position: relative; transition: transform .4s;
-    cursor: pointer;
+    aspect-ratio: 3 / 4; background: #fff; border: 1px solid var(--line);
+    padding: 12px 12px 42px; box-shadow: 0 8px 26px rgba(30,60,42,0.08);
+    position: relative; transition: transform .4s, box-shadow .4s;
+    cursor: pointer; border-radius: 4px;
   }
-  .photo:nth-child(odd) { transform: rotate(-1.5deg); }
-  .photo:nth-child(even) { transform: rotate(1.5deg); }
-  .photo:hover { transform: rotate(0) scale(1.03); z-index: 2; }
-  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; background: #fff; }
+  .photo:nth-child(1) { transform: rotate(-2deg); }
+  .photo:nth-child(2) { transform: rotate(1.2deg); }
+  .photo:nth-child(3) { transform: rotate(-1.5deg); }
+  .photo:hover { transform: rotate(0) scale(1.04); z-index: 2; box-shadow: 0 16px 40px rgba(45,106,79,0.16); }
+  .photo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 2px; }
   .photo .ph {
     width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
     background: #fff; color: var(--accent); font-size: 40px;
   }
-  .photo span { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font-family: "Great Vibes", cursive; font-size: 20px; color: var(--ink-soft); }
+  .photo span { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; font-family: "Great Vibes", cursive; font-size: 24px; color: var(--ink-soft); }
 
   .lightbox {
     position: fixed; inset: 0; background: rgba(255,255,255,0.96); z-index: 50;
@@ -185,8 +126,8 @@
     font-family: inherit; font-size: 22px; padding: 14px 42px; border-radius: 40px;
     cursor: pointer; transition: transform .2s, background .2s, box-shadow .2s;
   }
-  #yes { background: var(--ink); color: #fff; border: 1px solid var(--ink); box-shadow: var(--shadow); }
-  #yes:hover { transform: scale(1.06); }
+  #yes { background: var(--accent); color: #fff; border: 1px solid var(--accent); box-shadow: 0 8px 25px rgba(45, 106, 79, 0.25); }
+  #yes:hover { background: #23533e; transform: scale(1.06); }
   #no { background: #fff; color: var(--ink-soft); border: 1px solid var(--line); }
   #no.run { position: fixed; z-index: 40; transition: left .18s ease-out, top .18s ease-out; }
   .hint { color: var(--ink-soft); font-style: italic; min-height: 32px; margin-top: 10px; font-size: 18px; }
@@ -198,18 +139,18 @@
     opacity: 0; pointer-events: none; transition: opacity 1s;
   }
   .final.show { opacity: 1; pointer-events: auto; }
-  .final h3 { font-size: clamp(60px, 13vw, 110px); line-height: 1.1; }
+  .final h3 { font-size: clamp(60px, 13vw, 110px); line-height: 1.1; color: var(--ink); }
   .final p { color: var(--ink-soft); font-style: italic; font-size: 24px; margin-top: 16px; max-width: 520px; }
-  .final .big8 { font-size: 22px; letter-spacing: 6px; color: var(--accent); margin-top: 40px; }
+  .final .big-hearts { font-size: 26px; letter-spacing: 8px; color: var(--accent); margin-top: 36px; }
   #noteBtn {
-    margin-top: 40px; background: #fff; color: var(--ink);
+    margin-top: 40px; background: #fff; color: var(--accent);
     border: 1px solid var(--accent); box-shadow: var(--shadow);
     opacity: 0; transform: translateY(10px); pointer-events: none;
     transition: opacity 1s, transform 1s, background .2s;
   }
   #noteBtn.show { opacity: 1; transform: none; pointer-events: auto; animation: glow 2.4s ease-in-out infinite; }
   #noteBtn:hover { background: var(--accent-soft); }
-  @keyframes glow { 50% { box-shadow: 0 0 0 8px rgba(201,169,110,0.15), var(--shadow); } }
+  @keyframes glow { 50% { box-shadow: 0 0 0 8px rgba(45, 106, 79, 0.2), var(--shadow); } }
 
   .surprise {
     position: fixed; inset: 0; z-index: 70; background: #fff;
@@ -218,7 +159,7 @@
     opacity: 0; pointer-events: none; transition: opacity 1s;
   }
   .surprise.show { opacity: 1; pointer-events: auto; }
-  .surprise .eight { font-size: 14px; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; }
+  .surprise .badge { font-size: 14px; letter-spacing: 6px; color: var(--accent); text-transform: uppercase; }
   .surprise h3 { font-size: clamp(44px, 9vw, 72px); line-height: 1.2; margin: 6px 0 20px; }
   .surprise video {
     max-width: 100%; max-height: 72vh; background: #000;
@@ -234,7 +175,7 @@
   }
   .photo, .lightbox, .surprise video { -webkit-touch-callout: none; }
 
-  /* Sayfa odağı kaybedince (ekran görüntüsü aracı vb.) içerik gizlenir */
+  /* Sayfa odağı kaybedince içerik gizlenir */
   .shield {
     position: fixed; inset: 0; z-index: 999; background: #fff;
     display: none; align-items: center; justify-content: center;
@@ -253,7 +194,7 @@
     transition: opacity .8s, visibility .8s;
   }
   .gate.gone { opacity: 0; visibility: hidden; }
-  .gate .eight { font-size: 15px; letter-spacing: 8px; color: var(--accent); margin-bottom: 10px; }
+  .gate .badge { font-size: 15px; letter-spacing: 8px; color: var(--accent); margin-bottom: 10px; }
   .gate h1 { font-size: clamp(64px, 14vw, 110px); line-height: 1.05; }
   .gate .q { color: var(--ink-soft); font-style: italic; font-size: 24px; margin: 8px 0 40px; }
   .choices { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 640px; }
@@ -266,7 +207,7 @@
     animation: rise .9s cubic-bezier(.2, .8, .2, 1) both;
   }
   .choice:nth-child(2) { animation-delay: .15s; }
-  .choice:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 16px 50px rgba(60, 50, 30, .12); }
+  .choice:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 16px 50px rgba(45, 106, 79, .15); }
   .choice .ic { font-size: 40px; line-height: 1; display: block; margin-bottom: 12px; }
   .choice .t { font-family: "Great Vibes", cursive; font-size: 40px; line-height: 1.2; display: block; }
   .choice .d { color: var(--ink-soft); font-style: italic; font-size: 18px; display: block; margin-top: 6px; }
@@ -278,9 +219,7 @@
   @media (max-width: 600px) {
     body { font-size: 18px; }
     section { padding: 70px 16px; }
-    .stage { height: 420px; }
-    .balloon { width: 62px; height: 76px; font-size: 28px; }
-    .gallery { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .gallery { grid-template-columns: 1fr; max-width: 290px; margin: 0 auto; gap: 20px; }
     button { padding: 12px 32px; font-size: 20px; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -294,26 +233,28 @@
 <div id="petals"></div>
 
 <div class="gate" id="gate">
-  <div class="eight">✦ 8 ✦</div>
-  <h1 class="script">Ela,</h1>
-  <p class="q">ne yapmak istersin?</p>
+  <div class="badge">✦ cemre ✦</div>
+  <h1 class="script">Cemre,</h1>
+  <p class="q">senin için bir mektup var</p>
   <div class="choices">
-    <button class="choice" id="pickLetter">
+    <button class="choice" id="pickLetter" style="max-width: 320px;">
       <span class="ic">✉️</span>
       <span class="t">Özür mektubu</span>
       <span class="d">Sana yazdıklarımı oku</span>
     </button>
-    <a class="choice" href="chat.html">
-      <span class="ic">☁️</span>
-      <span class="t">ElaGPT</span>
+    <!-- AI kısmı şimdilik girişte gizlendi
+    <a class="choice" href="chat.html" style="display: none;">
+      <span class="ic">🌿</span>
+      <span class="t">CemreGPT</span>
       <span class="d">Biraz sohbet edelim</span>
     </a>
+    -->
   </div>
 </div>
 
 <section class="hero">
-  <div class="eight">✦ 8 ✦</div>
-  <h1 class="script">Ela,</h1>
+  <div class="badge">✦ sadece senin için ✦</div>
+  <h1 class="script">Cemre,</h1>
   <h1 class="script">özür dilerim</h1>
   <p>Sana söylemek istediğim birkaç şey var. Lütfen sonuna kadar oku.</p>
   <div class="scroll-hint">aşağı kaydır ↓</div>
@@ -321,40 +262,21 @@
 
 <section>
   <div class="wrap reveal">
-    <div class="divider">♡</div>
+    <div class="divider">💚</div>
     <div class="letter">
-      <div class="hi script">Sevgili Ela,</div>
+      <div class="hi script">Sevgili Cemre,</div>
       <p>Biliyorum, sana çok kötü bir giriş yaptım. Aklımdakini doğru anlatamadım, belki seni kırdım, belki de hiç olmamam gereken biri gibi göründüm. Bunu düşündükçe içim rahat etmiyor.</p>
       <p>Bahane bulmaya çalışmayacağım. Hata yaptım ve bunu kabul ediyorum. Sadece şunu bil: niyetim hiçbir zaman seni üzmek değildi.</p>
-      <p>Beyaz senin en sevdiğin renkmiş. O yüzden bu sayfayı tertemiz, bembeyaz yaptım. Benim de sana karşı niyetim böyle: temiz ve içten.</p>
+      <p>Yeşil senin en sevdiğin renkmiş. O yüzden bu sayfayı senin renginle, yemyeşil ve ferah hazırladım. Benim de sana karşı niyetim böyle: tertemiz, canlı ve içten.</p>
       <p>Bana bir şans daha verirsen, bu sefer doğru bir başlangıç yapmak istiyorum.</p>
       <div class="sign script">— Seni üzdüğü için pişman olan ben</div>
     </div>
   </div>
 </section>
 
-<section style="background: var(--bg-soft);">
-  <div class="wrap">
-    <div class="divider reveal">✦</div>
-    <h2 class="script reveal">Uğurlu sayın 8</h2>
-    <p class="sub reveal">O yüzden sana 8 balon şişirdim. Hepsini patlat, bakalım ne çıkacak 🎈</p>
-    <div class="counter reveal"><span id="popCount">0</span> / 8</div>
-    <div class="note" id="note">&nbsp;</div>
-    <div class="stage" id="stage">
-      <div class="eight-final" id="eightFinal">
-        <svg viewBox="0 0 120 150" aria-hidden="true">
-          <path pathLength="1" d="M60,75 C100,45 104,6 60,6 C16,6 20,45 60,75 C100,105 104,144 60,144 C16,144 20,105 60,75 Z"/>
-        </svg>
-        <p id="eightText"></p>
-        <button class="replay" id="replay">bir daha patlat ↺</button>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="foto-bolumu">
-  <div class="wrap" style="max-width: 980px;">
-    <div class="divider reveal">♡</div>
+  <div class="wrap" style="max-width: 860px;">
+    <div class="divider reveal">💚</div>
     <h2 class="script reveal">Sen</h2>
     <p class="sub reveal">Çünkü her biri gülümsemeye değer.</p>
     <div class="gallery" id="gallery"></div>
@@ -363,31 +285,31 @@
 
 <section class="ask">
   <div class="wrap reveal">
-    <div class="divider">✦</div>
+    <div class="divider">💚</div>
     <h2 class="script">Beni affediyor musun?</h2>
     <div class="buttons" id="btnArea">
-      <button id="yes">Evet ♡</button>
+      <button id="yes">Evet 💚</button>
       <button id="no" tabindex="-1">Hayır</button>
     </div>
     <div class="hint" id="hint"></div>
   </div>
 </section>
 
-<footer>Ela için, 8 kere özür dilerim ♡</footer>
+<footer>Cemre için, sonsuz kere özür dilerim 💚</footer>
 
-<div class="shield" id="shield">♡</div>
+<div class="shield" id="shield">💚</div>
 
 <div class="lightbox" id="lightbox"><img id="lbImg" alt=""></div>
 
 <div class="final" id="final">
   <h3 class="script">Teşekkür ederim</h3>
-  <p>Bu sefer her şeyi doğru yapacağım. Söz verdim, 8 kere.</p>
-  <div class="big8">♡ ♡ ♡ ♡ ♡ ♡ ♡ ♡</div>
-  <button id="noteBtn">Sana özel notu gör ♡</button>
+  <p>Bu sefer her şeyi doğru yapacağım. Söz verdim, tüm kalbimle.</p>
+  <div class="big-hearts">💚 💚 💚 💚 💚</div>
+  <button id="noteBtn">Sana özel notu gör 💚</button>
 </div>
 
 <div class="surprise" id="surprise">
-  <div class="eight">✦ sana özel ✦</div>
+  <div class="badge">✦ sana özel ✦</div>
   <h3 class="script">Küçük bir sürpriz</h3>
   <video id="surpriseVideo" src="surpriz.mp4" controls playsinline preload="metadata"
          controlsList="nodownload noplaybackrate noremoteplayback"
@@ -395,17 +317,17 @@
 </div>
 
 <script>
-  // ---- Fotoğraflar: "fotolar" klasörüne 1.jpg, 2.jpg ... 8.jpg koy ----
-  const PHOTO_COUNT = 8;
-  const captions = ["deniz kenarı", "öpücük", "o bakış", "asansör pozu", "trençkot", "bir öpücük daha", "şapka", "8"];
+  // ---- Fotoğraflar: "fotolar" klasöründeki 3 fotoğraf ----
+  const PHOTO_COUNT = 3;
+  const captions = ["o bakış", "gülümsemen", "gün ışığı"];
   const gallery = document.getElementById("gallery");
-  const exts = ["jpg", "jpeg", "png", "webp", "JPG", "JPEG", "PNG"];
+  const exts = ["png", "jpg", "jpeg", "webp", "PNG", "JPG", "JPEG"];
 
   for (let i = 1; i <= PHOTO_COUNT; i++) {
     const card = document.createElement("div");
     card.className = "photo reveal";
     const img = document.createElement("img");
-    img.alt = "Ela " + i;
+    img.alt = "Cemre " + i;
     img.loading = "lazy";
     let e = 0;
     img.src = `fotolar/${i}.${exts[e]}`;
@@ -414,7 +336,7 @@
       if (e < exts.length) { img.src = `fotolar/${i}.${exts[e]}`; }
       else {
         const ph = document.createElement("div");
-        ph.className = "ph"; ph.textContent = "♡";
+        ph.className = "ph"; ph.textContent = "💚";
         img.replaceWith(ph);
         card.style.cursor = "default";
       }
@@ -446,89 +368,13 @@
     openLetter();
   });
 
-  // ---- 8 balon oyunu ----
-  const stage = document.getElementById("stage");
-  const note = document.getElementById("note");
-  const popCount = document.getElementById("popCount");
-  const eightFinal = document.getElementById("eightFinal");
-  const eightText = document.getElementById("eightText");
-  const spots = [[6, 6], [30, 26], [54, 4], [80, 22], [12, 52], [36, 60], [60, 46], [84, 58]];
-  const notes = [
-    "Gülüşün: 10/10 ✨",
-    "Asansör pozların ayrı bir sanat 📸",
-    "Bu balon sadece “özür dilerim” diyor 🥺",
-    "Beyaz sana gerçekten çok yakışıyor 🤍",
-    "Öpücük pozu: onaylandı 💋",
-    "Yarıdan fazlası gitti, devam!",
-    "Bir tane kaldı… heyecan yapma",
-    "Ve sonuncusu… bak ne oldu 👇"
-  ];
-  let popped = 0;
-
-  function burst(x, y) {
-    for (let i = 0; i < 12; i++) {
-      const b = document.createElement("span");
-      b.className = "bit";
-      const a = (Math.PI * 2 * i) / 12, d = 40 + Math.random() * 40;
-      b.style.left = x + "px"; b.style.top = y + "px";
-      b.style.background = i % 3 ? "#e6dfd3" : "var(--accent)";
-      b.style.setProperty("--dx", Math.cos(a) * d + "px");
-      b.style.setProperty("--dy", Math.sin(a) * d + "px");
-      stage.appendChild(b);
-      setTimeout(() => b.remove(), 800);
-    }
-  }
-
-  function buildBalloons() {
-    popped = 0; popCount.textContent = "0"; note.innerHTML = "&nbsp;";
-    stage.classList.remove("done"); eightFinal.classList.remove("turn"); eightText.textContent = "";
-    spots.forEach(([l, t], i) => {
-      const b = document.createElement("button");
-      b.className = "balloon";
-      b.textContent = i + 1;
-      b.setAttribute("aria-label", "Balon " + (i + 1));
-      b.style.left = `calc(${l}% - ${l * 0.6}px)`;
-      b.style.top = t + "%";
-      b.style.animationDelay = (-i * 0.4) + "s";
-      b.style.animationDuration = (2.8 + (i % 3) * 0.4) + "s";
-      b.addEventListener("click", () => {
-        const r = b.getBoundingClientRect(), s = stage.getBoundingClientRect();
-        burst(r.left - s.left + r.width / 2, r.top - s.top + r.height / 2);
-        b.classList.add("pop");
-        setTimeout(() => b.remove(), 350);
-        note.textContent = notes[popped];
-        note.classList.remove("pop-in"); void note.offsetWidth; note.classList.add("pop-in");
-        popped++;
-        popCount.textContent = popped;
-        if (popped === 8) finishEight();
-      });
-      stage.appendChild(b);
-    });
-  }
-
-  function finishEight() {
-    const path = eightFinal.querySelector("path");
-    path.style.animation = "none"; void path.offsetWidth; path.style.animation = "";
-    setTimeout(() => {
-      stage.classList.add("done");
-      eightText.textContent = "Senin sayın: 8";
-      if (!reduce) for (let i = 0; i < 24; i++) setTimeout(petal, i * 60);
-    }, 500);
-    setTimeout(() => {
-      eightFinal.classList.add("turn");
-      eightText.innerHTML = '8’i yan çevirince sonsuzluk olur<br><span class="big">sonsuz kere özür dilerim ♡</span>';
-    }, 3600);
-  }
-  document.getElementById("replay").addEventListener("click", buildBalloons);
-  buildBalloons();
-
   // ---- Kaydırınca beliren bölümler ----
   const io = new IntersectionObserver(entries => {
     entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
   }, { threshold: 0.15 });
   document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-  // ---- Yağan beyaz yapraklar ----
+  // ---- Yağan yeşil yapraklar ----
   const petals = document.getElementById("petals");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function petal() {
@@ -554,9 +400,9 @@
     "Emin misin? 🥺",
     "Bir daha düşün…",
     "Lütfen…",
-    "8 söz verdim ama…",
+    "Çok söz verdim ama…",
     "Bu buton seni dinlemiyor galiba",
-    "Evet'e bas bence ♡",
+    "Evet'e bas bence 💚",
     "Son şans…",
     "Hayır seçeneği bozuk 🙈"
   ];
@@ -618,7 +464,6 @@
   });
 
   // ---- Kaydetme / ekran görüntüsü caydırıcıları ----
-  // Not: Tarayıcıda SS ve ekran kaydını %100 engellemek mümkün değil; bunlar zorlaştırır.
   const shield = document.getElementById("shield");
   const vid = document.getElementById("surpriseVideo");
   function hide() { shield.classList.add("on"); vid.pause(); }
@@ -647,7 +492,7 @@
   document.addEventListener("keyup", e => {
     if (e.key === "PrintScreen") {
       hide();
-      try { navigator.clipboard.writeText("♡").catch(() => {}); } catch (_) {}
+      try { navigator.clipboard.writeText("💚").catch(() => {}); } catch (_) {}
       setTimeout(show, 1500);
     }
   });

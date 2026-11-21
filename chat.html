@@ -3,49 +3,50 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
-<title>ElaGPT</title>
+<title>CemreGPT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,400&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #ffffff;
-    --bg-soft: #fbfaf8;
-    --ink: #2b2a28;
-    --ink-soft: #8a857e;
-    --line: #ece8e2;
-    --accent: #c9a96e;
-    --accent-soft: #f5efe4;
-    --user: #2b2a28;
-    --bot: #f5f2ed;
-    --online: #9ccf9a;
-    --angry: #e0857a;
-    --angry-line: #f3d4cf;
-    --angry-bg: #fdf6f5;
+    --bg-soft: #f2f7f4;
+    --ink: #1a2920;
+    --ink-soft: #5b7364;
+    --line: #d8e5dc;
+    --accent: #2d6a4f;
+    --accent-light: #52b788;
+    --accent-soft: #e8f5ed;
+    --user: #2d6a4f;
+    --bot: #eef5f0;
+    --online: #52b788;
+    --angry: #d64045;
+    --angry-line: #fad2d3;
+    --angry-bg: #fdf5f5;
     --surface: #ffffff;
-    --header-bg: rgba(255, 255, 255, .9);
+    --header-bg: rgba(255, 255, 255, .92);
     --user-ink: #ffffff;
-    --placeholder: #b5afa6;
-    --shadow: 0 10px 40px rgba(60, 50, 30, 0.08);
+    --placeholder: #8ea396;
+    --shadow: 0 10px 40px rgba(30, 60, 42, 0.08);
     color-scheme: light;
   }
-  /* Koyu tema: sistem koyuysa otomatik, ya da düğmeyle seçilince */
+  /* Koyu tema */
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #131211; --bg-soft: #1b1a18; --ink: #f2efe9; --ink-soft: #9a948b; --line: #2d2b28;
-      --accent: #d6b77d; --accent-soft: #2a251d; --user: #f2efe9; --bot: #22201d;
+      --bg: #0f1712; --bg-soft: #16241b; --ink: #edf5f0; --ink-soft: #8ca394; --line: #22382b;
+      --accent: #52b788; --accent-soft: #193825; --user: #2d6a4f; --bot: #192a20;
       --angry: #ec9488; --angry-line: #4a2c28; --angry-bg: #261a18;
-      --surface: #1b1a18; --header-bg: rgba(19, 18, 17, .88); --user-ink: #131211;
-      --placeholder: #6e6962; --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+      --surface: #16241b; --header-bg: rgba(15, 23, 18, .9); --user-ink: #ffffff;
+      --placeholder: #577060; --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #131211; --bg-soft: #1b1a18; --ink: #f2efe9; --ink-soft: #9a948b; --line: #2d2b28;
-    --accent: #d6b77d; --accent-soft: #2a251d; --user: #f2efe9; --bot: #22201d;
+    --bg: #0f1712; --bg-soft: #16241b; --ink: #edf5f0; --ink-soft: #8ca394; --line: #22382b;
+    --accent: #52b788; --accent-soft: #193825; --user: #2d6a4f; --bot: #192a20;
     --angry: #ec9488; --angry-line: #4a2c28; --angry-bg: #261a18;
-    --surface: #1b1a18; --header-bg: rgba(19, 18, 17, .88); --user-ink: #131211;
-    --placeholder: #6e6962; --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    --surface: #16241b; --header-bg: rgba(15, 23, 18, .9); --user-ink: #ffffff;
+    --placeholder: #577060; --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
     color-scheme: dark;
   }
   body { transition: background .3s, color .3s; }
@@ -83,7 +84,7 @@
     transition: filter .4s;
   }
   body.sulking .who .avatar { filter: grayscale(1); }
-  .who .name { font-family: "Great Vibes", cursive; font-size: 28px; line-height: 1; }
+  .who .name { font-family: "Great Vibes", cursive; font-size: 28px; line-height: 1; color: var(--ink); }
   .who .status { font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; min-height: 18px; }
   .who .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--online); transition: background .3s; }
   .who .status.typing { color: var(--accent); font-style: italic; }
@@ -105,7 +106,7 @@
     font-family: inherit; font-size: 14px; color: var(--ink); cursor: pointer;
     transition: border-color .2s, transform .2s, box-shadow .2s;
   }
-  .chip:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(60,50,30,.07); }
+  .chip:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(45,106,79,.12); }
   @keyframes float { 50% { transform: translateY(-8px); } }
   @keyframes fade { from { opacity: 0; transform: translateY(8px); } }
 
@@ -114,7 +115,7 @@
     white-space: pre-wrap; word-wrap: break-word; animation: fade .25s both;
   }
   .b.me { align-self: flex-end; background: var(--user); color: var(--user-ink); border-bottom-right-radius: 6px; }
-  .b.her { align-self: flex-start; background: var(--bot); border-bottom-left-radius: 6px; }
+  .b.her { align-self: flex-start; background: var(--bot); color: var(--ink); border-bottom-left-radius: 6px; }
   .b.first { margin-top: 14px; }
   .b.deleted { color: var(--ink-soft); font-style: italic; background: var(--surface); border: 1px dashed var(--line); }
   .b.deleted::before { content: "🚫 "; font-style: normal; }
@@ -152,12 +153,12 @@
   textarea::placeholder { color: var(--placeholder); }
   .send {
     width: 38px; height: 38px; flex: none; border-radius: 50%; border: none; cursor: pointer;
-    background: var(--ink); color: var(--bg); font-size: 18px; display: flex; align-items: center; justify-content: center;
-    transition: opacity .2s, transform .2s;
+    background: var(--accent); color: #ffffff; font-size: 18px; display: flex; align-items: center; justify-content: center;
+    transition: opacity .2s, transform .2s, background .2s;
   }
-  .send:hover:not(:disabled) { transform: scale(1.06); }
+  .send:hover:not(:disabled) { transform: scale(1.06); background: #23533e; }
   .send:disabled { opacity: .25; cursor: default; }
-  .send.stop { background: var(--accent); }
+  .send.stop { background: var(--accent-light); }
   .fine { text-align: center; color: var(--ink-soft); font-size: 12px; margin-top: 8px; }
 
   @media (max-width: 600px) {
@@ -172,9 +173,9 @@
 <header>
   <a class="back" href="index.html" title="Geri">← <span>Geri</span></a>
   <div class="who">
-    <div class="avatar">☁️</div>
+    <div class="avatar">🌿</div>
     <div>
-      <div class="name">ElaGPT</div>
+      <div class="name">CemreGPT</div>
       <div class="status" id="status">çevrimiçi</div>
     </div>
   </div>
@@ -185,9 +186,9 @@
 <main id="scroller">
   <div class="thread" id="thread">
     <div class="empty" id="empty">
-      <div class="cloud">☁️</div>
-      <h1 class="script">ElaGPT</h1>
-      <p>Ela'nın yapay zeka hâli. Birebir.</p>
+      <div class="cloud">🌿</div>
+      <h1 class="script">CemreGPT</h1>
+      <p>Cemre'nin yapay zeka hâli. Birebir.</p>
       <p class="warn">Dikkat: ters bir şey dersen küsüp gidebilir 😤</p>
       <div class="chips">
         <button class="chip">selam</button>
@@ -209,13 +210,13 @@
 
 <script>
   // ============================================================
-  //  ElaGPT sohbet arayüzü
+  //  CemreGPT sohbet arayüzü
   //  - Sohbet sadece bu sayfanın hafızasında durur, hiçbir yere kaydedilmez.
   //  - Cevaplar /api/chat (Vercel + Gemini) üzerinden gelir.
   //  - Cevaptaki her satır ayrı mesaj olarak gösterilir.
   //  - Özel işaretler:
   //      [SILINDI: metin]  -> mesaj gönderilir, sonra "bu mesaj silindi" olur
-  //      [KUS]             -> ElaGPT küser, bir süre mesaj atılamaz
+  //      [KUS]             -> CemreGPT küser, bir süre mesaj atılamaz
   // ============================================================
   const API_URL = "/api/chat";
 
@@ -227,7 +228,7 @@
   const statusEl = document.getElementById("status");
   const emptyHTML = document.getElementById("empty").outerHTML;
 
-  // ---- Koyu / açık tema (sadece tema tercihi hatırlanır, sohbet değil) ----
+  // ---- Koyu / açık tema ----
   const themeBtn = document.getElementById("themeBtn");
   const sysDark = window.matchMedia("(prefers-color-scheme: dark)");
   function currentTheme() {
@@ -237,12 +238,12 @@
     document.documentElement.dataset.theme = t;
     themeBtn.textContent = t === "dark" ? "☀" : "☾";
   }
-  try { const saved = localStorage.getItem("elagpt-theme"); if (saved) applyTheme(saved); } catch (_) {}
+  try { const saved = localStorage.getItem("cemregpt-theme"); if (saved) applyTheme(saved); } catch (_) {}
   themeBtn.textContent = currentTheme() === "dark" ? "☀" : "☾";
   themeBtn.addEventListener("click", () => {
     const next = currentTheme() === "dark" ? "light" : "dark";
     applyTheme(next);
-    try { localStorage.setItem("elagpt-theme", next); } catch (_) {}
+    try { localStorage.setItem("cemregpt-theme", next); } catch (_) {}
   });
 
   let messages = [];     // sadece hafızada: { role: "user" | "model", text }
@@ -307,7 +308,7 @@
     return { steps, sulk };
   }
 
-  // ElaGPT'nin mesajlarını tek tek, yazıyormuş gibi gönder
+  // CemreGPT'nin mesajlarını tek tek, yazıyormuş gibi gönder
   async function play(raw, token) {
     const { steps, sulk } = parseReply(raw);
     for (let i = 0; i < steps.length; i++) {
@@ -340,7 +341,7 @@
     const secs = Math.round(rand(30, 60));
     sulkUntil = Date.now() + secs * 1000;
     document.body.classList.add("sulking");
-    sysNote("ElaGPT küstü ve sohbetten çıktı 😤", true);
+    sysNote("CemreGPT küstü ve sohbetten çıktı 😤", true);
     input.disabled = true;
     tickSulk();
     sulkTimer = setInterval(tickSulk, 1000);
@@ -358,12 +359,11 @@
     input.disabled = false;
     input.placeholder = "Mesaj yaz…";
     setStatus("çevrimiçi");
-    if (announce) sysNote("ElaGPT geri döndü 👀 ama hâlâ biraz triplidir");
+    if (announce) sysNote("CemreGPT geri döndü 👀 ama hâlâ biraz triplidir");
     autosize();
   }
 
   // ---- API ----
-  // Yapay zeka bağlı değilken (yerel önizleme) gösterilecek cevaplar
   const demoReplies = [
     "ay\nne diyon sen\nahahhahahahahhahaha",
     "[SILINDI: kağan lütfen yapar mısın]\nçok tatlısın ya",
@@ -414,7 +414,6 @@
     const myChat = chatId;
     const token = run = { stopped: false, ctrl: new AbortController() };
     try {
-      // gerçek biri gibi okuyup biraz düşünsün
       await sleep(rand(400, 900));
       const reply = await getReply(token.ctrl.signal);
       if (token.stopped) throw new DOMException("durduruldu", "AbortError");
@@ -425,7 +424,7 @@
       setStatus("çevrimiçi");
       if (e.name !== "AbortError") {
         messages.pop();
-        sysNote("bağlantı koptu, bir daha dener misin ☁️", true);
+        sysNote("bağlantı koptu, bir daha dener misin 🌿", true);
       }
     } finally {
       if (myChat === chatId) {
@@ -469,7 +468,7 @@
     stop();
     chatId++;
     run = null;
-    setBusy(false);   // küsmüşse yeni sohbet de küsmeyi bitirmez
+    setBusy(false);
     messages = [];
     lastSide = null;
     thread.innerHTML = emptyHTML;
